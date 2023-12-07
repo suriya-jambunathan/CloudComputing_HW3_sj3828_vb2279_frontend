@@ -1,3 +1,5 @@
+
+
 var apigClient = apigClientFactory.newClient();
 window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
 
@@ -88,41 +90,114 @@ function searchPhotos(searchText) {
 }
 
 function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    // reader.onload = () => resolve(reader.result)
-    reader.onload = () => {
-      let encoded = reader.result.replace(/^data:(.*;base64,)?/, '');
-      if (encoded.length % 4 > 0) {
-        encoded += '='.repeat(4 - (encoded.length % 4));
-      }
-      resolve(encoded);
-    };
-    reader.onerror = (error) => reject(error);
-  });
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        // reader.onload = () => resolve(reader.result)
+        reader.onload = () => {
+            let encoded = reader.result.replace(/^data:(.*;base64,)?/, '');
+            if (encoded.length % 4 > 0) {
+                encoded += '='.repeat(4 - (encoded.length % 4));
+            }
+            resolve(encoded);
+            };
+        reader.onerror = (error) => reject(error);
+    });
 }
 
+
+
+
+
+// function uploadPhoto() {
+//     let file = document.getElementById('uploaded_file').files[0];
+//     let file_name = file.name;
+//     let file_type = file.type;
+//     let reader = new FileReader();
+
+//     reader.onload = function() {
+//         let arrayBuffer = this.result;
+//         let blob = new Blob([new Int8Array(arrayBuffer)], {
+//             type: file_type
+//         });
+//         let blobUrl = URL.createObjectURL(blob);
+//         let binary = atob(this.image.split(',')[1])
+//             let array = []
+//             for (var i = 0; i < binary.length; i++) {
+//               array.push(binary.charCodeAt(i))
+//             }
+//         //let blobData = new Blob([new Uint8Array(array)], {type: 'image/jpeg'})
+
+
+//         let data = document.getElementById('uploaded_file').files[0];
+//         // const result = fetch(response.uploadURL, {
+//         //     method: 'PUT',
+//         //     body: blobData
+//         //   })
+//         //   console.log('Result: ', result)
+//         // var body = data;
+//         // var params = {"key" : file.name, "bucket" : "photobucketassign2", "Content-Type" : file.type};
+//         // var additionalParams = {};
+//         // apigClient.uploadBucketKeyPut(params, body , additionalParams).then(function(res){
+//         // if (res.status == 200)
+//         // {
+//         //     document.getElementById("uploadText").innerHTML = "Image Uploaded  !!!"
+//         //     document.getElementById("uploadText").style.display = "block";
+//         // }
+//         // })
+//         let xhr = new XMLHttpRequest();
+//         xhr.addEventListener("readystatechange", function () {
+//             if (this.readyState === 4) {
+//                 console.log(this.responseText);
+//                 document.getElementById('uploadText').innerHTML ='Image Uploaded  !!!';
+//                 document.getElementById('uploadText').style.display = 'block';
+//             }
+//         });
+//         xhr.withCredentials = false;
+//         xhr.open("PUT", "https://5nbofmg7z8.execute-api.us-east-1.amazonaws.com/beta/upload/photobucketassign2/"+data.name);
+//         xhr.setRequestHeader("Content-Type", data.type);
+//         xhr.setRequestHeader("x-api-key","Q0C7p4TwQT1lLRtTSIDnG7y2nL4gnmQ4rfTlAj4h");
+//         xhr.setRequestHeader("x-amz-meta-customLabels", custom_labels.value);
+//         xhr.setRequestHeader("Access-Control-Allow-Origin", '*');
+//         xhr.send(data);
+//         document.getElementById('uploadText').innerHTML='Image Uploading Started  !!!';
+
+//     };
+//     reader.readAsArrayBuffer(file);
+// }
+
+
 function uploadPhoto() {
-    var file = document.getElementById('uploaded_file').files[0];
-    console.log(custom_labels.value);
+    let file = document.getElementById('uploaded_file').files[0];
+    let file_name = file.name;
+    let file_type = file.type;
+    let reader = new FileReader();
 
-    var file_data;
-    
-    var additionalParams = {
-        headers: {
-            // 'Access-Control-Allow-Origin': '*',
-            'x-amz-meta-customLabels': custom_labels.value,
-            'Content-Type': file.type
-        }
+    reader.onload = function() {
+        let arrayBuffer = this.result;
+        let blob = new Blob([new Int8Array(arrayBuffer)], {
+            type: file_type
+        });
+        let blobUrl = URL.createObjectURL(blob);
+
+
+        let data = document.getElementById('uploaded_file').files[0];
+        let xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                console.log(this.responseText);
+                document.getElementById('uploadText').innerHTML ='Image Uploaded  !!!';
+                document.getElementById('uploadText').style.display = 'block';
+            }
+        });
+        xhr.withCredentials = false;
+        xhr.open("PUT", "https://6ds86vvzz2.execute-api.us-east-1.amazonaws.com/dev/upload/cc-hw3-bucket/"+data.name);
+        xhr.setRequestHeader("Content-Type", data.type);
+        xhr.setRequestHeader("x-api-key","QEtyQW1Hmq4DRJ1cC69vj7uS62Kt4HQl2aQGEu2k");
+        xhr.setRequestHeader("x-amz-meta-customLabels", custom_labels.value);
+        xhr.setRequestHeader("Access-Control-Allow-Origin", '*');
+        xhr.send(data);
     };
-
-    url = "https://iweisj7vid.execute-api.us-east-1.amazonaws.com/Testing/upload/photo-store-b2/" + file.name;
-    axios.put(url, file, additionalParams).then((response) => {
-    console.log(" New " + response.data);
-    console.log("Success");
-    document.getElementById("uploadText").innerHTML = "IMAGE UPLOADED SUCCESSFULLY!";
-    document.getElementById("uploadText").style.display = "block";
-    document.getElementById("uploadText").style.color = "white";
-    document.getElementById("uploadText").style.fontWeight = "bold";
-    });
+    reader.readAsArrayBuffer(file);
+}
